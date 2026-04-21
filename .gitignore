@@ -12,3 +12,10 @@ Thumbs.db
 
 # Node (in case anything gets added later)
 node_modules/
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+.env*
+!.env.example
