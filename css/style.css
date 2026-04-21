@@ -4266,3 +4266,107 @@ body.light-mode .mobile-sticky-cta a {
     font-size: 0.7rem;
   }
 }
+
+
+/* ============================================
+   MOBILE COMPATIBILITY PASS
+   Consolidated mobile fixes. Appended last so these
+   rules win the cascade at equal specificity.
+   Breakpoints: 900 / 700 / 480 / 375 (+ RTL mirrors).
+   ============================================ */
+
+/* --- A1/C: mobile menu uses dynamic viewport height
+       so Safari URL bar no longer clips it.
+       100vh kept above as a fallback for old browsers. --- */
+.mobile-menu { height: 100dvh; }
+
+@media (max-width: 900px) {
+  /* A1: hero fills one phone screen, not 980px of empty space */
+  #hero {
+    min-height: 100vh;
+    padding: 100px 0 60px;
+  }
+
+  /* A2: collapse hero 2-col grid to single column; removes the
+         360px min-column that forced horizontal scroll */
+  .hero-shell {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}
+
+@media (max-width: 700px) {
+  /* A3: navbar breathes on small screens */
+  #navbar { padding: 12px 16px; }
+  #navbar.scrolled { padding: 10px 16px; }
+
+  /* D1: pull lightbox controls inward so they sit safely on thumbs */
+  .lightbox-close { top: 12px; right: 12px; }
+  .lightbox-prev { left: 6px; }
+  .lightbox-next { right: 6px; }
+}
+
+@media (max-width: 480px) {
+  /* A4: reclaim wasted horizontal padding on narrow phones */
+  .container { padding: 0 16px; }
+
+  /* A1 continued: remove the imposed min-height on the tiniest phones */
+  #hero {
+    min-height: auto;
+    padding: 80px 0 50px;
+  }
+
+  /* B1: hero typography — the clamp(..., 10vw, ...) collapsed to
+         ~37px on 375-wide screens, which was unreadable. Cap it. */
+  .hero-title,
+  .hero-title-upgraded { font-size: 2.2rem; letter-spacing: 4px; }
+  .hero-subtitle { font-size: 0.85rem; letter-spacing: 2px; }
+
+  /* B2: button padding — shrink so buttons don't dominate */
+  .btn-primary,
+  .btn-secondary { padding: 12px 20px; }
+
+  /* C2: mobile menu width — fixed 320px was >85% of a 375px screen */
+  .mobile-menu { width: 75vw; }
+
+  /* D2: lightbox image safety margin */
+  .lightbox-img,
+  .lightbox-img-wrap { max-width: calc(100vw - 60px); }
+
+  /* Portfolio single-column already set elsewhere at 480px;
+     leave that rule alone. */
+}
+
+/* --- E: iPhone SE / mini tier (<=375px) --- */
+@media (max-width: 375px) {
+  .container { padding: 0 12px; }
+  .hero-title,
+  .hero-title-upgraded { font-size: 1.9rem; letter-spacing: 3px; }
+  .hero-subtitle { font-size: 0.78rem; }
+  .btn-primary,
+  .btn-secondary { padding: 11px 16px; font-size: 0.7rem; letter-spacing: 2px; }
+  .portfolio-grid { grid-template-columns: 1fr; }
+  .lightbox-img,
+  .lightbox-img-wrap { max-width: calc(100vw - 40px); }
+}
+
+/* --- F: RTL parity. Arabic pages need the mobile menu to slide
+       in from the LEFT (not the right) and lightbox arrows mirrored. --- */
+html[dir="rtl"] .mobile-menu {
+  right: auto;
+  left: -100%;
+  border-left: none;
+  border-right: 1px solid rgba(201, 168, 76, 0.2);
+  transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html[dir="rtl"] .mobile-menu.open {
+  right: auto;
+  left: 0;
+}
+
+@media (max-width: 700px) {
+  html[dir="rtl"] .lightbox-close { left: 12px; right: auto; }
+  html[dir="rtl"] .lightbox-prev { right: 6px; left: auto; }
+  html[dir="rtl"] .lightbox-next { left: 6px; right: auto; }
+}
