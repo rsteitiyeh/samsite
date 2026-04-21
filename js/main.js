@@ -656,19 +656,28 @@ function initCookieBanner() {
   const banner = document.getElementById('cookie-banner');
   if (!banner) return;
 
+  const syncBodyClass = () => {
+    document.body.classList.toggle('cookie-visible', !banner.classList.contains('hidden'));
+  };
+
   if (getCookiePreference()) {
     banner.classList.add('hidden');
+    syncBodyClass();
     return;
   }
+
+  syncBodyClass();
 
   document.getElementById('cookie-accept')?.addEventListener('click', () => {
     setCookiePreference('accepted');
     banner.classList.add('hidden');
+    syncBodyClass();
   });
 
   document.getElementById('cookie-decline')?.addEventListener('click', () => {
     setCookiePreference('declined');
     banner.classList.add('hidden');
+    syncBodyClass();
   });
 }
 

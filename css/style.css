@@ -43,6 +43,7 @@ html {
   scroll-behavior: smooth;
   font-size: 16px;
   -webkit-text-size-adjust: 100%;
+  overflow-x: hidden;
 }
 
 body {
@@ -4224,48 +4225,10 @@ body.light-mode .mobile-sticky-cta a {
   font-weight: 700;
 }
 
-@media (max-width: 1100px) {
-  .site-tools {
-    top: 82px;
-    right: 76px;
-  }
-
-  html[dir="rtl"] .site-tools {
-    left: 76px;
-    right: auto;
-  }
-}
-
-@media (max-width: 700px) {
-  .site-tools {
-    top: 78px;
-    bottom: auto;
-    left: 14px;
-    right: 62px;
-    justify-content: space-between;
-    border-radius: 18px;
-    padding: 7px 8px;
-  }
-
-  html[dir="rtl"] .site-tools {
-    left: 62px;
-    right: 14px;
-  }
-
-  .lang-option {
-    min-width: 40px;
-    padding: 7px 10px;
-  }
-
-  .theme-toggle {
-    padding: 8px 10px;
-    gap: 6px;
-  }
-
-  .theme-toggle-label {
-    font-size: 0.7rem;
-  }
-}
+/* .site-tools positioning consolidated into the MOBILE COMPATIBILITY PASS
+   block below. The duplicate @media (max-width: 1100px) and (max-width: 700px)
+   .site-tools rules that used to live here fought the final mobile pill
+   positioning and have been removed. */
 
 
 /* ============================================
@@ -4302,7 +4265,8 @@ body.light-mode .mobile-sticky-cta a {
 
   /* Reposition the EN/AR + theme pill. Its older rule stretched it
      full-width below the navbar, covering the hero. Tuck it into the
-     top-right as a compact pill instead. */
+     top-right as a compact pill instead. z-index:1008 keeps it above
+     the scrolled-navbar stack. */
   .site-tools {
     top: 72px;
     right: 14px;
@@ -4314,6 +4278,7 @@ body.light-mode .mobile-sticky-cta a {
     gap: 6px;
     border-radius: 999px;
     justify-content: flex-end;
+    z-index: 1008;
   }
 
   html[dir="rtl"] .site-tools {
@@ -4332,6 +4297,10 @@ body.light-mode .mobile-sticky-cta a {
     gap: 5px;
   }
 
+  /* .mobile-sticky-cta already carries WhatsApp; a second floating
+     WhatsApp bubble is redundant and sits behind the strip anyway */
+  .whatsapp-float { display: none; }
+
   /* Pull lightbox controls inward so they sit safely on thumbs */
   .lightbox-close { top: 12px; right: 12px; }
   .lightbox-prev { left: 6px; }
@@ -4342,28 +4311,31 @@ body.light-mode .mobile-sticky-cta a {
   /* Reclaim wasted horizontal padding on narrow phones */
   .container { padding: 0 16px; }
 
-  /* Shorten hero padding on the tiniest phones */
+  /* Hero padding clears navbar (~60px) + site-tools pill (~32px) + gap */
   #hero {
     min-height: auto;
-    padding: 118px 0 50px;
+    padding: 130px 0 50px;
   }
 
-  /* Hero typography. The hero-title uses the base letter-spacing;
-     hero-title-upgraded was designed with zero letter-spacing so
-     keep that. 1.65rem reads clean without dominating the viewport. */
-  .hero-title { font-size: 1.65rem; letter-spacing: 2px; line-height: 1.15; }
-  .hero-title-upgraded { font-size: 1.7rem; letter-spacing: 0; line-height: 1.15; }
+  /* Hero typography. The serif display face is wide, so a long H1
+     sentence balloons. 1.3rem reads comfortably on a 375px screen.
+     hero-title-upgraded was designed with zero letter-spacing. */
+  .hero-title { font-size: 1.3rem; letter-spacing: 1.5px; line-height: 1.15; }
+  .hero-title-upgraded { font-size: 1.35rem; letter-spacing: 0; line-height: 1.1; }
 
-  /* Hero eyebrow and mark-name — also scale down */
-  .hero-eyebrow { font-size: 0.62rem; letter-spacing: 2px; line-height: 1.5; }
-  .hero-mark-name { font-size: 1.1rem; }
-  .hero-mark-sub { font-size: 0.72rem; }
-  .hero-logo { width: 54px; height: 54px; }
+  /* Hero eyebrow and mark-name — scale down */
+  .hero-eyebrow { font-size: 0.6rem; letter-spacing: 2px; line-height: 1.5; }
+  .hero-mark-name { font-size: 1rem; }
+  .hero-mark-sub { font-size: 0.66rem; line-height: 1.45; }
+  .hero-logo { width: 48px; height: 48px; }
 
-  /* Hero lead paragraph (has both .hero-subtitle and .hero-lead;
-     override both so line-height from .hero-lead: 1.9 doesn't leak in) */
-  .hero-subtitle { font-size: 0.82rem; letter-spacing: 2px; }
-  .hero-lead { font-size: 0.92rem; line-height: 1.6; letter-spacing: 0; }
+  /* Let the mark-wrap stack cleanly if it runs out of width */
+  .hero-mark-wrap { flex-wrap: wrap; gap: 10px; }
+
+  /* Hero lead paragraph (element has both .hero-subtitle and .hero-lead;
+     override both so .hero-lead's line-height: 1.9 doesn't leak in) */
+  .hero-subtitle { font-size: 0.78rem; letter-spacing: 2px; }
+  .hero-lead { font-size: 0.88rem; line-height: 1.55; letter-spacing: 0; }
 
   /* Button padding — shrink so buttons don't dominate */
   .btn-primary,
@@ -4382,10 +4354,10 @@ body.light-mode .mobile-sticky-cta a {
 
   /* Cookie banner and the mobile sticky CTA both claim the bottom
      of the screen. While the banner is showing, hide the sticky CTA
-     so they don't stack. When the banner hides (.hidden class), the
-     sticky CTA returns naturally. Requires :has() — Chrome 105+,
-     Safari 15.4+, Firefox 121+. */
-  body:has(#cookie-banner:not(.hidden)) .mobile-sticky-cta {
+     so they don't stack. :has() covers modern browsers; the
+     body.cookie-visible fallback is set by js/main.js for older ones. */
+  body:has(#cookie-banner:not(.hidden)) .mobile-sticky-cta,
+  body.cookie-visible .mobile-sticky-cta {
     display: none;
   }
 }
@@ -4393,10 +4365,10 @@ body.light-mode .mobile-sticky-cta a {
 /* iPhone SE / mini tier */
 @media (max-width: 375px) {
   .container { padding: 0 12px; }
-  .hero-title { font-size: 1.45rem; letter-spacing: 1.5px; }
-  .hero-title-upgraded { font-size: 1.5rem; letter-spacing: 0; }
-  .hero-subtitle { font-size: 0.76rem; }
-  .hero-lead { font-size: 0.88rem; line-height: 1.55; }
+  .hero-title { font-size: 1.15rem; letter-spacing: 1px; }
+  .hero-title-upgraded { font-size: 1.2rem; letter-spacing: 0; }
+  .hero-subtitle { font-size: 0.72rem; }
+  .hero-lead { font-size: 0.82rem; line-height: 1.5; }
   .btn-primary,
   .btn-secondary { padding: 11px 16px; font-size: 0.7rem; letter-spacing: 2px; }
   .portfolio-grid { grid-template-columns: 1fr; }
