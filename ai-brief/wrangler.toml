@@ -1,0 +1,27 @@
+name = "ai-brief"
+main = "src/worker.js"
+compatibility_date = "2026-05-16"
+
+# Asia/Amman = UTC+3
+# 13:00 Amman → 10:00 UTC  |  19:00 Amman → 16:00 UTC
+[triggers]
+crons = ["0 10 * * *", "0 16 * * *"]
+
+[vars]
+TO_EMAIL = "rami@trilot.com"
+
+# Required secrets — set each with: wrangler secret put <NAME>
+#
+#   ANTHROPIC_API_KEY      — from console.anthropic.com
+#   BRAVE_SEARCH_API_KEY   — from api.search.brave.com (Free tier: 2000 req/mo)
+#   GMAIL_CLIENT_ID        — Google Cloud Console → OAuth 2.0 Client ID
+#   GMAIL_CLIENT_SECRET    — Google Cloud Console → OAuth 2.0 Client Secret
+#   GMAIL_REFRESH_TOKEN    — OAuth2 refresh token with gmail.send scope
+#   FROM_EMAIL             — the Gmail address the token belongs to
+#
+# To get a Gmail refresh token:
+#   1. Create OAuth2 credentials at console.cloud.google.com (Desktop app type)
+#   2. Enable Gmail API
+#   3. Run: npx google-auth-library get-token --scope gmail.send
+#      OR use OAuth2 Playground: https://developers.google.com/oauthplayground
+#      (select Gmail API v1 → gmail.send, exchange for refresh token)
