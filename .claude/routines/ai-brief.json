@@ -1,0 +1,56 @@
+{
+  "name": "AI Brief",
+  "description": "Twice-daily AI industry news digest sent via email",
+  "connectors": ["gmail", "web_search"],
+  "recipient": "rami@trilot.com",
+  "triggers": [
+    {
+      "type": "schedule",
+      "label": "Midday run",
+      "cron": "0 10 * * *",
+      "timezone_label": "13:00 Asia/Amman",
+      "utc_equivalent": "10:00 UTC"
+    },
+    {
+      "type": "schedule",
+      "label": "Evening run",
+      "cron": "0 16 * * *",
+      "timezone_label": "19:00 Asia/Amman",
+      "utc_equivalent": "16:00 UTC"
+    }
+  ],
+  "slot_detection": {
+    "midday": {
+      "local_hours": "12:00–15:00 Asia/Amman",
+      "lookback_hours": 12,
+      "lookback_desc": "since 01:00 Amman time today"
+    },
+    "evening": {
+      "local_hours": "18:00–21:00 Asia/Amman",
+      "lookback_hours": 6,
+      "lookback_desc": "since 13:00 Amman time today"
+    }
+  },
+  "email": {
+    "subject_midday": "AI Brief — Midday — {DD MMM YYYY}",
+    "subject_evening": "AI Brief — Evening — {DD MMM YYYY}",
+    "sections": [
+      "Top 3-5 stories",
+      "Anthropic updates",
+      "OpenAI updates",
+      "Google / Gemini updates",
+      "New AI companies & launches",
+      "X.com tips & threads",
+      "Read this first"
+    ],
+    "max_words": 800,
+    "format": "html"
+  },
+  "runner": ".claude/ai_brief_runner.py",
+  "github_actions_workflow": ".github/workflows/ai-brief.yml",
+  "required_secrets": [
+    "ANTHROPIC_API_KEY",
+    "GMAIL_CREDENTIALS_JSON",
+    "GMAIL_TOKEN_JSON"
+  ]
+}
